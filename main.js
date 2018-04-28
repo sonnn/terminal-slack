@@ -61,7 +61,7 @@ function formatMessageMentions(text) {
   if (userMentions !== null) {
     userMentions
       .map(match => match.substr(2, match.length - 3))
-      .forEach((userId) => {
+      .forEach(userId => {
         let username;
         let modifier;
         if (userId === currentUser.id) {
@@ -69,7 +69,8 @@ function formatMessageMentions(text) {
           modifier = 'yellow-fg';
         } else {
           const user = users.find(potentialUser => potentialUser.id === userId);
-          username = typeof user === 'undefined' ? UNKNOWN_USER_NAME : user.name;
+          username =
+            typeof user === 'undefined' ? UNKNOWN_USER_NAME : user.name;
           modifier = 'underline';
         }
 
@@ -99,12 +100,14 @@ function handleNewMessage(message) {
       icon: path.join(__dirname, 'Slack_Mark_Black_Web.png'),
       message: `${username}: ${message.text}`,
       sound: true,
-      title: 'Terminal Slack',
+      title: 'Terminal Slack'
     });
   }
 
-  if (message.channel !== currentChannelId ||
-      typeof message.text === 'undefined') {
+  if (
+    message.channel !== currentChannelId ||
+    typeof message.text === 'undefined'
+  ) {
     return;
   }
 
@@ -139,7 +142,7 @@ slack.init((data, ws) => {
   // that relies on websockets
 
   // event handler when message is submitted
-  components.messageInput.on('submit', (text) => {
+  components.messageInput.on('submit', text => {
     if (!text || !text.length) {
       components.messageInput.focus();
       return;
@@ -148,33 +151,42 @@ slack.init((data, ws) => {
     const id = getNextId();
     components.messageInput.clearValue();
     components.messageInput.focus();
-    components.chatWindow.scrollTo(components.chatWindow.getLines().length * SCROLL_PER_MESSAGE);
+    components.chatWindow.scrollTo(
+      components.chatWindow.getLines().length * SCROLL_PER_MESSAGE
+    );
     components.chatWindow.insertBottom(
       `{bold}${currentUser.name}{/bold}: ${text} (pending - ${id})`
     );
     components.chatWindow.scroll(SCROLL_PER_MESSAGE);
 
     components.screen.render();
-    ws.send(JSON.stringify({
-      id,
-      type: 'message',
-      channel: currentChannelId,
-      text,
-    }));
+    ws.send(
+      JSON.stringify({
+        id,
+        type: 'message',
+        channel: currentChannelId,
+        text
+      })
+    );
   });
 
   // set the user list to the users returned from slack
   // called here to check against currentUser
   slack.getUsers((error, response, userData) => {
     if (error || response.statusCode !== 200) {
-      console.log( // eslint-disable-line no-console
-        'Error: ', error, response || response.statusCode
+      console.log(
+        // eslint-disable-line no-console
+        'Error: ',
+        error,
+        response || response.statusCode
       );
       return;
     }
 
     const parsedUserData = JSON.parse(userData);
-    users = parsedUserData.members.filter(user => !user.deleted && user.id !== currentUser.id);
+    users = parsedUserData.members.filter(
+      user => !user.deleted && user.id !== currentUser.id
+    );
 
     components.userList.setItems(users.map(slackUser => slackUser.name));
     components.screen.render();
@@ -188,8 +200,11 @@ components.screen.render();
 // set the channel list to the channels returned from slack
 slack.getChannels((error, response, data) => {
   if (error || response.statusCode !== 200) {
-    console.log( // eslint-disable-line no-console
-      'Error: ', error, response && response.statusCode
+    console.log(
+      // eslint-disable-line no-console
+      'Error: ',
+      error,
+      response && response.statusCode
     );
     return;
   }
@@ -214,7 +229,7 @@ function updateMessages(data, markFn) {
     // Some messages related to message threading don't have text. This feature
     // isn't supported by terminal-slack right now so we filter them out
     .filter(item => typeof item.text !== 'undefined')
-    .map((message) => {
+    .map(message => {
       const len = users.length;
       let username;
       let i;
@@ -232,10 +247,12 @@ function updateMessages(data, markFn) {
       }
       return { text: message.text, username: username || UNKNOWN_USER_NAME };
     })
-    .forEach((message) => {
+    .forEach(message => {
       // add messages to window
       components.chatWindow.unshiftLine(
-        `{bold}${message.username}{/bold}: ${formatMessageMentions(message.text)}`
+        `{bold}${message.username}{/bold}: ${formatMessageMentions(
+          message.text
+        )}`
       );
     });
 
@@ -246,12 +263,14 @@ function updateMessages(data, markFn) {
 
   // reset messageInput and give focus
   components.messageInput.clearValue();
-  components.chatWindow.scrollTo(components.chatWindow.getLines().length * SCROLL_PER_MESSAGE);
+  components.chatWindow.scrollTo(
+    components.chatWindow.getLines().length * SCROLL_PER_MESSAGE
+  );
   components.messageInput.focus();
   components.screen.render();
 }
 
-components.userList.on('select', (data) => {
+components.userList.on('select', data => {
   const username = data.content;
 
   // a channel was selected
@@ -260,20 +279,24 @@ components.userList.on('select', (data) => {
   components.screen.render();
 
   // get user's id
-  const userId = users.find(potentialUser => potentialUser.name === username).id;
+  const userId = users.find(potentialUser => potentialUser.name === username)
+    .id;
 
   slack.openIm(userId, (error, response, imData) => {
     const parsedImData = JSON.parse(imData);
     currentChannelId = parsedImData.channel.id;
 
     // load im history
-    slack.getImHistory(currentChannelId, (histError, histResponse, imHistoryData) => {
-      updateMessages(JSON.parse(imHistoryData), slack.markIm);
-    });
+    slack.getImHistory(
+      currentChannelId,
+      (histError, histResponse, imHistoryData) => {
+        updateMessages(JSON.parse(imHistoryData), slack.markIm);
+      }
+    );
   });
 });
 
-components.channelList.on('select', (data) => {
+components.channelList.on('select', data => {
   const channelName = data.content;
 
   // a channel was selected
@@ -287,8 +310,11 @@ components.channelList.on('select', (data) => {
     currentChannelId = parsedChannelData.channel.id;
 
     // get the previous messages of the channel and display them
-    slack.getChannelHistory(currentChannelId, (histError, histResponse, channelHistoryData) => {
-      updateMessages(JSON.parse(channelHistoryData), slack.markChannel);
-    });
+    slack.getChannelHistory(
+      currentChannelId,
+      (histError, histResponse, channelHistoryData) => {
+        updateMessages(JSON.parse(channelHistoryData), slack.markChannel);
+      }
+    );
   });
 });
