@@ -194,7 +194,7 @@ slack.init((data, ws) => {
 });
 
 // set the channel list
-components.channelList.setItems(['Connecting to Slack...']);
+components.channelList.setItems(['Connecting...']);
 components.screen.render();
 
 // set the channel list to the channels returned from slack
@@ -275,7 +275,7 @@ components.userList.on('select', data => {
 
   // a channel was selected
   components.mainWindowTitle.setContent(`{bold}${username}{/bold}`);
-  components.chatWindow.setContent('Getting messages...');
+  components.chatWindow.setContent('Loading...');
   components.screen.render();
 
   // get user's id
@@ -301,7 +301,7 @@ components.channelList.on('select', data => {
 
   // a channel was selected
   components.mainWindowTitle.setContent(`{bold}${channelName}{/bold}`);
-  components.chatWindow.setContent('Getting messages...');
+  components.chatWindow.setContent('Loading...');
   components.screen.render();
 
   // join the selected channel
