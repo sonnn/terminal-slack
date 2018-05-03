@@ -7,8 +7,9 @@ module.exports = {
     const screen = blessed.screen({
       autopadding: true,
       smartCSR: true,
-      title: 'Slack',
+      title: 'Terminal',
       fullUnicode: true,
+      terminal: 'windows-ansi'
     });
 
     const container = blessed.box({
@@ -16,13 +17,13 @@ module.exports = {
       height: '100%',
       style: {
         fg: '#bbb',
-        bg: '#1d1f21',
-      },
+        bg: '#1d1f21'
+      }
     });
 
     const sideBar = blessed.box({
       width: '30%',
-      height: '100%',
+      height: '100%'
     });
 
     const mainWindow = blessed.box({
@@ -31,18 +32,18 @@ module.exports = {
       left: '30%',
       // scrollable: true,
       border: {
-        type: 'line',
+        type: 'line'
       },
       style: {
         border: {
-          fg: '#888',
-        },
-      },
+          fg: '#888'
+        }
+      }
     });
 
     const mainWindowTitle = blessed.text({
       width: '90%',
-      tags: true,
+      tags: true
     });
 
     const chatWindow = blessed.box({
@@ -54,7 +55,7 @@ module.exports = {
       vi: true,
       scrollable: true,
       alwaysScroll: true,
-      tags: true,
+      tags: true
     });
 
     const messageInput = blessed.textbox({
@@ -65,8 +66,8 @@ module.exports = {
       vi: true,
       inputOnFocus: true,
       border: {
-        type: 'line',
-      },
+        type: 'line'
+      }
     });
 
     function searchChannels(searchCallback) {
@@ -75,7 +76,7 @@ module.exports = {
         left: '5%',
         align: 'left',
         content: '{bold}Search{/bold}',
-        tags: true,
+        tags: true
       });
       const searchBox = blessed.textbox({
         width: '90%',
@@ -87,8 +88,8 @@ module.exports = {
         inputOnFocus: true,
         border: {
           fg: '#cc6666',
-          type: 'line',
-        },
+          type: 'line'
+        }
       });
       function removeSearchBox() {
         mainWindow.remove(searchBox);
@@ -108,7 +109,7 @@ module.exports = {
           }
         }
       });
-      searchBox.on('submit', (text) => {
+      searchBox.on('submit', text => {
         removeSearchBox();
         searchCallback(text);
       });
@@ -125,13 +126,13 @@ module.exports = {
       width: '100%',
       height: '60%',
       border: {
-        type: 'line',
+        type: 'line'
       },
       style: {
         border: {
-          fg: '#888',
-        },
-      },
+          fg: '#888'
+        }
+      }
     });
 
     const channelsTitle = blessed.text({
@@ -139,7 +140,7 @@ module.exports = {
       left: '5%',
       align: 'center',
       content: '{bold}Channels{/bold}',
-      tags: true,
+      tags: true
     });
 
     const channelList = blessed.list({
@@ -153,10 +154,10 @@ module.exports = {
       style: {
         selected: {
           bg: '#373b41',
-          fg: '#c5c8c6',
-        },
+          fg: '#c5c8c6'
+        }
       },
-      tags: true,
+      tags: true
     });
 
     const usersBox = blessed.box({
@@ -164,13 +165,13 @@ module.exports = {
       height: '40%',
       top: '60%',
       border: {
-        type: 'line',
+        type: 'line'
       },
       style: {
         border: {
-          fg: '#888',
-        },
-      },
+          fg: '#888'
+        }
+      }
     });
 
     const usersTitle = blessed.text({
@@ -178,7 +179,7 @@ module.exports = {
       left: '5%',
       align: 'center',
       content: '{bold}Users{/bold}',
-      tags: true,
+      tags: true
     });
 
     const userList = blessed.list({
@@ -192,10 +193,10 @@ module.exports = {
       style: {
         selected: {
           bg: '#373b41',
-          fg: '#c5c8c6',
-        },
+          fg: '#c5c8c6'
+        }
       },
-      tags: true,
+      tags: true
     });
 
     channelsBox.append(channelsTitle);
@@ -246,11 +247,11 @@ module.exports = {
     });
 
     // event handlers for focus and blur of inputs
-    const onFocus = (component) => {
+    const onFocus = component => {
       component.style.border = { fg: '#cc6666' }; // eslint-disable-line no-param-reassign
       screen.render();
     };
-    const onBlur = (component) => {
+    const onBlur = component => {
       component.style.border = { fg: '#888' }; // eslint-disable-line no-param-reassign
       screen.render();
     };
@@ -274,7 +275,7 @@ module.exports = {
       mainWindow,
       mainWindowTitle,
       chatWindow,
-      messageInput,
+      messageInput
     };
-  },
+  }
 };
