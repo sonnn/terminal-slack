@@ -1,8 +1,10 @@
 const fs = require('fs');
 const request = require('request');
 const WebSocket = require('ws');
+const HttpsProxyAgent = require('https-proxy-agent');
 
 const TOKEN = process.env.SLACK_TOKEN;
+const HTTP_PROXY = process.env.HTTP_PROXY;
 const PROXY = process.env.PROXY;
 
 if (TOKEN === undefined) {
@@ -58,8 +60,15 @@ module.exports = {
   init(callback) {
     slackRequest('rtm.start', {}, (error, response, data) => {
       const parsedData = JSON.parse(data);
-      const ws = new WebSocket(proxyUrl(parsedData.url));
-      callback(parsedData, ws);
+      try {
+        const ws = new WebSocket(proxyUrl(parsedData.url), {
+          agent: new HttpsProxyAgent(HTTP_PROXY)
+        });
+        callback(parsedData, ws);
+      } catch (e) {
+        fs.writeFileSync('error_log.txt', parsedData.url);
+        process.exit(1);
+      }
     });
   },
   getChannels(callback) {
