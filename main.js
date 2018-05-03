@@ -98,9 +98,9 @@ function handleNewMessage(message) {
 
     notifier.notify({
       icon: path.join(__dirname, 'Slack_Mark_Black_Web.png'),
-      message: `${username}: ${message.text}`,
+      message: `${username}->${message.text}`,
       sound: true,
-      title: 'Terminal Slack'
+      title: 'Terminal'
     });
   }
 
